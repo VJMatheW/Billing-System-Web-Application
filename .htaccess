@@ -1,0 +1,44 @@
+# Turn Rewrite Engine on
+RewriteEngine on
+
+#NC makes non case sentive
+# L make this the last rule that this specific condition will match
+
+# RewriteRule for /log.html
+RewriteRule ^login /index.html
+RewriteRule ^logout /formcontroller/logout.php
+RewriteRule ^authenticate /formcontroller/login.php
+RewriteRule ^admin /includes/admin.php
+RewriteRule ^billing /includes/billing.php
+RewriteRule ^rebill /includes/reprint.php
+RewriteRule  ^viewbill /includes/showbill.php  [NC,L]  #for view the bill
+RewriteRule  ^list/([a-z]+) /includes/tableshow.php?type=$1  [NC,L]  #for getting service or staff table
+
+# Rewrite for /ajaxcontroller/billing.php
+RewriteRule  ^all /ajaxcontroller/billing.php  [NC,L]
+RewriteRule  ^info/([0-9]+) /ajaxcontroller/billing.php?phoneno=$1  [NC,L]  #for getting info with specific phone number
+RewriteRule  ^history/([0-9]+) /ajaxcontroller/billing.php?custid=$1  [NC,L]  #for getting bill history with specific cust_id
+
+# Rewrite for /ajaxcontroller/adminreq.php
+RewriteRule  ^staff/([0-9]+) /ajaxcontroller/adminreq.php?w_id=$1  [NC,L]  #for getting staff info with specific w_id
+RewriteRule  ^service/([0-9]+) /ajaxcontroller/adminreq.php?s_id=$1  [NC,L]  #for getting service info with specific s_id
+
+# Rewrite for /ajaxcontroller/rebill.php
+RewriteRule  ^checkbillexists/([0-9]+) /ajaxcontroller/rebill.php?billno=$1 [NC,L] #check whether the bill no exists
+RewriteRule  ^recentbill/([0-9-]+)/([0-9-]+) /ajaxcontroller/rebill.php?from=$1&to=$2 [NC,L] # get bill data on specified date
+RewriteRule  ^recentbill /ajaxcontroller/rebill.php? [NC,L] # get todays bill
+RewriteRule  ^paymodeamt/([0-9-]+)/([0-9-]+) /ajaxcontroller/rebill.php?from=$1&to=$2 [NC,L] # get paymodeamt on specified date
+RewriteRule  ^paymodeamt /ajaxcontroller/rebill.php? [NC,L] # get paymodeamt on current day
+RewriteRule  ^editbill /ajaxcontroller/rebill.php?editbill [NC,L] #for post
+
+# Rewrite for /ajaxcontroller/billinfo.php
+RewriteRule  ^billdetail/([0-9]+) /ajaxcontroller/billinfo.php?billno=$1 [NC,L] #fetch whole info about bill
+
+# AJAX POST REQUEST
+RewriteRule  ^service /ajaxcontroller/adminreq.php?service [NC,L] #for post
+RewriteRule  ^staff /ajaxcontroller/adminreq.php?staff [NC,L] #for post
+
+# Rewrite for /formcontroller/billing.php
+RewriteRule  ^billme /formcontroller/billing.php?billme  [NC,L]  #for posting bill details into DB
+RewriteRule  ^summary /formcontroller/summary.php?summary [QSA,NC,L] #for post and generate pdf
+RewriteRule  ^print/([0-9]+) /formcontroller/billing.php?billno=$1  [NC,L]  #for reprinting bill 
