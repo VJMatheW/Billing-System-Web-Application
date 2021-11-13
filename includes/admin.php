@@ -31,6 +31,7 @@ require '../components/Components.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-store" />
     <title>Admin</title>
     <link rel="stylesheet" href="/stylesheet/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheet/main.css">
@@ -85,9 +86,34 @@ require '../components/Components.php';
                 </div>
             </form>
         </div>
-        <div class="content">            
+        <div class="content">            <!-- STAFF Service summary -->
             <form action="/summary" method="GET" class="form-inline" target="_blank">                              
                 <h3>STAFF Service Summary</h3>
+                <div class="form-group sid">
+                    <label for="from">Staff :</label>
+                    <select class="form-control" name="wid">
+                        <?php 
+                            echo $selectWorker;
+                        ?>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="from"> From :</label>
+                    <input type="date" id="from" name="from" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="to"> To :</label>
+                    <input type="date" class="form-control" name="to" id="to">
+                </div>                 
+                <div class="form-group">
+                    <label for="submit" ></label>
+                    <input type="submit" class="btn btn-success" value="Generate">
+                </div>
+            </form>
+        </div>
+        <div class="content">            <!-- STAFF summary by date -->         
+            <form action="/summarybydate" method="GET" class="form-inline" target="_blank">                              
+                <h3>STAFF Summary By DATE </h3>
                 <div class="form-group sid">
                     <label for="from">Staff :</label>
                     <select class="form-control" name="wid">

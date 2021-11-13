@@ -121,6 +121,16 @@ function tableHeadForStaffSummary($pdf){
     $pdf->Cell(13,10,"Amt",1,1,"C");    
 }
 
+function tableHeadForStaffSummaryByDate($pdf){
+    $pdf->SetFont('Times','B',12);
+    $pdf->Cell(10,10,"Sno",1,0,"C");
+    $pdf->Cell(36,10,"Date",1,0,"C");
+    $pdf->Cell(36,10,"NoofService",1,0,"C");
+    $pdf->Cell(36,10,"Amount",1,0,"C");
+    $pdf->Cell(36,10,"Discount",1,0,"C");
+    $pdf->Cell(36,10,"Total",1,1,"C");   
+}
+
 function tableBodyForStaffSummary($pdf, $result){
     $pdf->SetFont('Times','',12);
     $sno = 1;
@@ -136,6 +146,35 @@ function tableBodyForStaffSummary($pdf, $result){
         $pdf->Cell(13,10,$row['famount']." ",1,1,"R");
         $sno++;
     }
+}
+
+function tableBodyForStaffSummaryByDate($pdf, $result){
+    $pdf->SetFont('Times','',12);
+    $sno = 1;
+    $noofservice = 0;
+    $amount = 0;
+    $discount = 0;
+    $total = 0;
+    while($row = $result->fetch_assoc()){
+        $pdf->Cell(10,10,$sno,1,0,"C");
+        $pdf->Cell(36,10,$row['date'],1,0,"C");
+        $pdf->Cell(36,10,$row['noofservice'],1,0,"C");
+        $pdf->Cell(36,10,$row['amount'],1,0,"C");
+        $pdf->Cell(36,10,$row['discount'],1,0,"C");
+        $pdf->Cell(36,10,$row['total'],1,1,"C");
+
+        $noofservice += $row['noofservice'];
+        $amount += $row['amount'];
+        $discount += $row['discount'];
+        $total += $row['total'];
+        $sno++;
+    }
+    $pdf->SetFont('Times','B',12);
+    $pdf->Cell(46,10,'Total',1,0,"C");
+    $pdf->Cell(36,10,$noofservice,1,0,"C");
+    $pdf->Cell(36,10,$amount,1,0,"C");
+    $pdf->Cell(36,10,$discount,1,0,"C");
+    $pdf->Cell(36,10,$total,1,0,"C");
 }
 
 function setPaymodeTable($pdf, $obj){
@@ -259,33 +298,61 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
     $to = test_input($_GET['to']);    
     $arr = explode(',',$_GET['wid']); // worker_id = 0, worker_name = 1
     $wid = test_input($arr[0]);
-    //echo $from." / ".$to." / ".$wid;
-    $query = "select b.billno,date(b.date) as date,e.name,e.phone,c.service_name,a.amount,a.discount,a.famount
-    from tblbillinghelper as a inner join tblbilling as b
-    on a.billno=b.billno
-    inner join tblservice as c
-    on a.service_id=c.s_id
-    inner join tblworker as d
-    on a.worker_id=d.w_id
-    inner join tblcustinfo as e
-    on b.cust_id=e.cust_id
-    where date(b.date) between '".$from."' and '".$to."' and a.worker_id=".$wid."
-    order by b.date asc;";
+    // echo $from." / ".$to." / ".$wid. " / ".$_SERVER['REQUEST_URI'] ;
 
-    $result = executeSelect($query);
-    if($result){       
-        $pdf = new myPDF('STAFF SERVICE SUMMARY');
-        $pdf->AliasNbPages(); // for footer page number
-        $pdf->AddPage('P',"A4");
-        $pdf->setLogoandTitle();
-        $pdf->SetFont('Times','',12);
-        $pdf->cell(0,10,"STAFF NAME : ".ucfirst($arr[1]),0,1,"C");                
-        $pdf->setDate(arrangeDate($from),arrangeDate($to));
-        tableHeadForStaffSummary($pdf);
-        tableBodyForStaffSummary($pdf, $result);
-        $pdf->Output();
-    }else{
-        echo "<h1>No result</h1>";
+    if(startsWith($_SERVER['REQUEST_URI'],"/summarybydate?")){
+        $query = "select date(b.date) as date, count(bh.billno) as noofservice, sum(amount) as amount, sum(discount) as discount, sum(famount) as total from tblbilling as b
+        left join tblbillinghelper as bh on b.billno=bh.billno
+        where date(b.date) between '".$from."' and '".$to."' and bh.worker_id=".$wid."
+        group by date(b.date) order by b.date asc";
+
+        // echo $query;
+
+        $result = executeSelect($query);
+        if($result){       
+            $pdf = new myPDF('STAFF SUMMARY BY DATE');
+            $pdf->AliasNbPages(); // for footer page number
+            $pdf->AddPage('P',"A4");
+            $pdf->setLogoandTitle();
+            $pdf->SetFont('Times','',12);
+            $pdf->cell(0,10,"STAFF NAME : ".ucfirst($arr[1]),0,1,"C");                
+            $pdf->setDate(arrangeDate($from),arrangeDate($to));
+            tableHeadForStaffSummaryByDate($pdf);
+            tableBodyForStaffSummaryByDate($pdf, $result);
+            $pdf->Output();
+        }else{
+            echo "<h1>No result</h1>";
+        }
+    }
+
+    if(startsWith($_SERVER['REQUEST_URI'],"/summary?")){
+        $query = "select b.billno,date(b.date) as date,e.name,e.phone,c.service_name,a.amount,a.discount,a.famount
+            from tblbillinghelper as a inner join tblbilling as b
+            on a.billno=b.billno
+            inner join tblservice as c
+            on a.service_id=c.s_id
+            inner join tblworker as d
+            on a.worker_id=d.w_id
+            inner join tblcustinfo as e
+            on b.cust_id=e.cust_id
+            where date(b.date) between '".$from."' and '".$to."' and a.worker_id=".$wid."
+            order by b.date asc;";
+
+        $result = executeSelect($query);
+        if($result){       
+            $pdf = new myPDF('STAFF SERVICE SUMMARY');
+            $pdf->AliasNbPages(); // for footer page number
+            $pdf->AddPage('P',"A4");
+            $pdf->setLogoandTitle();
+            $pdf->SetFont('Times','',12);
+            $pdf->cell(0,10,"STAFF NAME : ".ucfirst($arr[1]),0,1,"C");                
+            $pdf->setDate(arrangeDate($from),arrangeDate($to));
+            tableHeadForStaffSummary($pdf);
+            tableBodyForStaffSummary($pdf, $result);
+            $pdf->Output();
+        }else{
+            echo "<h1>No result</h1>";
+        }
     }
 }
 ?>

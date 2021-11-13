@@ -9,6 +9,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta http-equiv="Cache-Control" content="no-store" />
     <title>Home</title>    
     <link rel="stylesheet" href="/stylesheet/bootstrap/bootstrap.min.css">
     <link rel="stylesheet" href="/stylesheet/main.css">
@@ -62,7 +63,7 @@
         }       
         .bg-image {
   /* The image used */
-  background-image: url("photographer.jpg");
+  background-image: url("/resource/logo.jpg");
 
   /* Add the blur effect */
   filter: blur(8px);
@@ -139,7 +140,7 @@
                     <span id="tonormal" ><b>Print Receipt <input type="checkbox" id="checkprint" ></b></span>
                         <button style="float:right" id="genBill" class="btn btn-success" ><b>Generate Bill</b></button>                
                     </h3>                    
-                    <p class="billtotal" ><span><b>Tendered Amt : </b> <input type="text" oninput="numberOnly(this);" onblur="setChangeAmt();" placeholder="0" class="form-inline" id="tamt"></p>
+                    <p class="billtotal" ><span><b>Tendered Amt : </b> <input type="text" onClick="this.select();" oninput="numberOnly(this);" onblur="setChangeAmt();" placeholder="0" class="form-inline" id="tamt"></p>
                     <p class="billtotal" ><span><b>Change : </b></span><span id="bamt">0</span></p>
                     <p class="billtotal" ><span><b>Total Amt : </b></span><span id="amt">0</span></p>
                     <div id="billinfo"></div>

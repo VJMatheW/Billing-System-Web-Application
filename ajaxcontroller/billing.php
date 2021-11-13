@@ -26,7 +26,7 @@ if($_SERVER["REQUEST_METHOD"] == "GET"){
                 array_push($number,$row['phone']);
             }            
         }else{
-            array_push($number,FALSE);
+            array_push($number);
         }
 
         // fetching all the service names        

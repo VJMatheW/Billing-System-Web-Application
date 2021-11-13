@@ -35,12 +35,13 @@ function executeSelect($selectQuery){
 function executeInsert($insertQuery){
     $con = getCon();
     if(gettype($con) == "object"){
-        //echo $insertQuery;
+        echo $insertQuery;
         if($con->query($insertQuery) === TRUE){
             $con->close();
             return TRUE;                
         }else{
             $con->close();
+            echo $con->error;
             return $con->error;
         }   
     }else{

@@ -40,6 +40,5 @@ RewriteRule  ^staff /ajaxcontroller/adminreq.php?staff [NC,L] #for post
 
 # Rewrite for /formcontroller/billing.php
 RewriteRule  ^billme /formcontroller/billing.php?billme  [NC,L]  #for posting bill details into DB
-RewriteRule  ^summarybydate /formcontroller/summary.php?summary [QSA,NC,L] #for post and generate pdf
 RewriteRule  ^summary /formcontroller/summary.php?summary [QSA,NC,L] #for post and generate pdf
 RewriteRule  ^print/([0-9]+) /formcontroller/billing.php?billno=$1  [NC,L]  #for reprinting bill 

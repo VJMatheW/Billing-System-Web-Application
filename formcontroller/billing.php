@@ -55,7 +55,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" ){
         }    
 
         // inserting for billing both new or existing customer
-        $tempresult = $con->query("select max(billno)+1 as newbillno from tblbilling");
+        $tempresult = $con->query("select count(billno)+1 as newbillno from tblbilling");
         $r = $tempresult->fetch_assoc();
         $newbillno = $r['newbillno'] == null ? 1 : $r['newbillno'] ;
         $billarray = $obj['bill'];
@@ -72,7 +72,7 @@ if($_SERVER["REQUEST_METHOD"] == "POST" ){
                 $valq .= ",(".$newbillno.",".$single['serviceid'].",".$single['workerid'].",".$single['mrp'].",".$single['discount'].",".$single['finalamt'].")";
             }    
         }
-        //echo "insert into tblbilling(billno,cust_id,date,totalamount,paymode,tenderamount) values(".$newbillno.",".$cust_id.",now(),".$totalamount.",".$paymode.",".$tenderamt.")";
+        // echo "insert into tblbilling(billno,cust_id,date,totalamount,paymode,tenderamount) values(".$newbillno.",".$cust_id.",now(),".$totalamount.",".$paymode.",".$tenderamt.")";
         if($con->query("insert into tblbilling(billno,cust_id,date,totalamount,paymode,tenderamount) values(".$newbillno.",".$cust_id.",now(),".$totalamount.",".$paymode.",".$tenderamt.")") === TRUE){
             //echo "insert into tblbillinghelper(billno,service_id,worker_id,amount,discount)values".$valq;        
             if($con->query("insert into tblbillinghelper(billno,service_id,worker_id,amount,discount,famount)values".$valq) === TRUE){            

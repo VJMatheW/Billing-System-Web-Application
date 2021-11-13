@@ -29,7 +29,7 @@ function getAll(){    // this will be called onfocus of number field
         service_names = obj.service; 
         paymode_names = obj.paymode;        
         rate = obj.s_rate;                   
-        numbers = obj.number; 
+        numbers = obj.number[0] ? obj.number : []; // [false] will come, when there is no customer
         getRecentBill();        
         // creating & appending payMode Options
         $("#paymode_div").html("");
@@ -379,7 +379,8 @@ function createInput(type, placeholder, name){
       "class":"form-control",
       "name" : name,
       "onblur" : "calculate(this)",
-      "onkeydown" : "calculate(this)"      
+      "onkeydown" : "calculate(this)",
+      "onClick" : "this.select()" 
     }
   }else{
     attr = {
@@ -419,12 +420,12 @@ function setForBillEdit(){
 }
 
 function setrate(obj){  
-  val = parseInt($(obj).val());   
+  selectedServiceIndex = parseInt(obj.selectedIndex);
   parent = $(obj).parent().parent().parent();
-  if(!val == ""){
-    $($($($(parent).children()[1]).children()[0]).children()[0]).val(rate[(val-1)]);
+  if(selectedServiceIndex != 0){
+    $($($($(parent).children()[1]).children()[0]).children()[0]).val(rate[(selectedServiceIndex-1)]);
     $($($($(parent).children()[1]).children()[1]).children()[0]).val("0");
-    $($($($(parent).children()[1]).children()[2]).children()[0]).val(rate[(val-1)]);
+    $($($($(parent).children()[1]).children()[2]).children()[0]).val(rate[(selectedServiceIndex-1)]);
   }else{
     $($($($(parent).children()[1]).children()[0]).children()[0]).val("");
     $($($($(parent).children()[1]).children()[1]).children()[0]).val("");
@@ -513,6 +514,7 @@ function autocomplete(inp, arr) {
         this.parentNode.appendChild(a);
         /*for each item in the array...*/
         for (i = 0; i < arr.length; i++) {
+            console.log({ arr });
           /*check if the item starts with the same letters as the text field value:*/
           if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
             /*create a DIV element for each matching element:*/
